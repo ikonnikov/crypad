@@ -27,7 +27,7 @@ def main():
     task = LongLegCatcher(
         # currency_pairs=[('dash_usd', 'usd', 'dash'), ('dash_doge', 'dash', 'doge'), ('waves_doge', 'doge', 'waves'), ('waves_usd', 'waves', 'usd')],
         # currency_pairs=[('eth_usd', 'usd', 'eth'), ('eth_btc', 'eth', 'btc'), ('btc_usd', 'btc', 'usd')],
-        # currency_pairs=[('doge_usd', 'usd', 'doge'), ('yes_doge', 'doge', 'yes'), ('yes_usd', 'yes', 'usd')],
+        currency_pairs=[('doge_usd', 'usd', 'doge'), ('yes_doge', 'doge', 'yes'), ('yes_usd', 'yes', 'usd')],
         callback_time=STATUSDELAY
     )
     task.start()
