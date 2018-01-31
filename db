@@ -1,0 +1,80 @@
+CREATE SCHEMA `t` DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ;
+use `t`;
+
+CREATE TABLE `exchange` (
+  `idEx` tinyint(3) NOT NULL AUTO_INCREMENT,
+  `Name` varchar(45) CHARACTER SET utf8 DEFAULT NULL,
+  PRIMARY KEY (`idEx`),
+  UNIQUE KEY `idExchange_UNIQUE` (`idEx`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+INSERT INTO `exchange` (`idEx`,`Name`) VALUES (1,"Yobit"),(2,"HitBTC"),(3,"bittrex");
+
+CREATE TABLE `info` (
+  `tickerID` int(11) NOT NULL AUTO_INCREMENT,
+  `ExchID` tinyint(3) NOT NULL DEFAULT '1',
+  `pairs` varchar(20) NOT NULL,
+  `decimal_places` decimal(3,0) DEFAULT NULL,
+  `min_price` decimal(20,10) DEFAULT NULL,
+  `max_price` decimal(20,10) DEFAULT NULL,
+  `min_amount` decimal(20,10) DEFAULT NULL,
+  `min_total` decimal(20,10) DEFAULT NULL,
+  `hidden` decimal(1,0) NOT NULL,
+  `fee` decimal(3,2) DEFAULT NULL,
+  `fee_buyer` decimal(3,2) DEFAULT NULL,
+  `fee_seller` decimal(3,2) DEFAULT NULL,
+  `server_time` int(11) DEFAULT NULL,
+  `node` varchar(7) NOT NULL,
+  `edge` varchar(7) NOT NULL,
+  PRIMARY KEY (`tickerID`),
+  UNIQUE KEY `pairs_UNIQUE` (`pairs`,`ExchID`),
+  KEY `fk1_idx` (`ExchID`),
+  CONSTRAINT `fk1` FOREIGN KEY (`ExchID`) REFERENCES `exchange` (`idEx`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=19305 DEFAULT CHARSET=utf8 COMMENT='Dictionary';
+
+CREATE TABLE `ticker` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `ExchID` tinyint(3) NOT NULL DEFAULT '1',
+  `time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `high` decimal(20,10) DEFAULT NULL,
+  `low` decimal(20,10) DEFAULT NULL,
+  `avg` decimal(20,10) DEFAULT NULL,
+  `vol` decimal(20,10) DEFAULT NULL,
+  `vol_cur` decimal(20,10) DEFAULT NULL,
+  `last` decimal(20,10) NOT NULL,
+  `buy` decimal(20,10) DEFAULT NULL,
+  `sell` decimal(20,10) DEFAULT NULL,
+  `updated` timestamp NULL DEFAULT NULL,
+  `pairs` varchar(20) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `exch_fk1_idx` (`ExchID`),
+  CONSTRAINT `exch_fk1` FOREIGN KEY (`ExchID`) REFERENCES `exchange` (`idEx`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Last 24h';
+
+CREATE TABLE `trades` (
+  `tradesID` int(11) NOT NULL AUTO_INCREMENT,
+  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `ExchID` tinyint(3) NOT NULL DEFAULT '1',
+  `type` tinyint(4) NOT NULL,
+  `tid` int(11) NOT NULL,
+  `amount` decimal(20,10) NOT NULL,
+  `price` decimal(20,10) NOT NULL,
+  `pairs` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`tradesID`),
+  KEY `fk3_idx` (`ExchID`),
+  CONSTRAINT `fk3` FOREIGN KEY (`ExchID`) REFERENCES `exchange` (`idEx`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='last orders';
+
+CREATE TABLE `depth` (
+  `iddepth` int(11) NOT NULL AUTO_INCREMENT,
+  `ExchID` tinyint(3) NOT NULL DEFAULT '1',
+  `time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `asks` decimal(20,10) DEFAULT NULL,
+  `bids` decimal(20,10) DEFAULT NULL,
+  `pairs` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
+  `qty` decimal(20,10) NOT NULL,
+  PRIMARY KEY (`iddepth`),
+  KEY `fk3_idx` (`ExchID`),
+  CONSTRAINT `exchid_fk` FOREIGN KEY (`ExchID`) REFERENCES `exchange` (`idEx`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='active orders';
+
