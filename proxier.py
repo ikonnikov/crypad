@@ -6,6 +6,7 @@ import requests
 from random import randint
 from bs4 import BeautifulSoup as bsoup
 
+
 def is_bad_proxy(pip):
     try:
         proxy_handler = urllib2.ProxyHandler({'http': pip})
@@ -20,6 +21,7 @@ def is_bad_proxy(pip):
         return True
 
     return False
+
 
 def get_random_proxy(proxy_list):
     proxy = {}
@@ -65,22 +67,23 @@ def get_random_proxy(proxy_list):
 
 
 class Proxy(object):
-    proxy_url = u'http://www.ip-adress.com/proxy_list/'
-    proxy_list = []
-
     def __init__(self):
-        r = requests.get(self.proxy_url)
+        self._proxy_url = u'http://www.ip-adress.com/proxy_list/'
+        self.proxies_list = []
+
+    def parse(self):
+        r = requests.get(self._proxy_url)
 
         soup = bsoup(r.content, u'html.parser')
-        proxies_tag = soup.find_all(u'tr', class_=u'odd')
+        proxies_tag = soup.find(u'table', class_=u'htable proxylist').find(u'tbody').find_all(u'tr')
 
         for proxy_tag in proxies_tag:
-            self.proxy_list.append(proxy_tag.find_all(u'td')[0].text.strip())
+            self.proxies_list.append(proxy_tag.find_all(u'td')[0].text.strip())
 
     def get_proxy(self):
         proxy_dict = {}
 
-        for proxy in self.proxy_list:
+        for proxy in self.proxies_list:
             if not is_bad_proxy(proxy):
                 proxy_dict[u'proxy'] = proxy
                 proxy_dict[u'proxy_type'] = u'http'
@@ -91,5 +94,7 @@ class Proxy(object):
 
         return proxy_dict
 
-proxies = Proxy()
-proxy_args = proxies.get_proxy()
+# example:
+# proxier = Proxy()
+# proxier.parse()
+# print(proxier.proxies_list)
