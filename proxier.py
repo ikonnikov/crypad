@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import urllib2
-import string
 import requests
 from random import randint
 from bs4 import BeautifulSoup as bsoup
@@ -32,7 +31,6 @@ def get_random_proxy(proxy_list):
 
     try:
         my_proxy = u''
-        my_proxy_type = u''
 
         tries = 3
         while tries > 0:
@@ -40,11 +38,7 @@ def get_random_proxy(proxy_list):
 
             index = randint(0, len(proxy_list))
 
-            proxy_row = proxy_list[index]
-            proxy_args = string.split(proxy_row, u'/')
-
-            my_proxy = proxy_args[0]
-            my_proxy_type = proxy_args[1]
+            my_proxy = proxy_list[index]
 
             if my_proxy in bad_proxy_list:
                 continue
@@ -59,7 +53,6 @@ def get_random_proxy(proxy_list):
             raise ValueError(u'No proxy')
 
         proxy[u'proxy'] = my_proxy
-        proxy[u'proxy_type'] = my_proxy_type
     except Exception:
         pass # no proxy if out of index
 
